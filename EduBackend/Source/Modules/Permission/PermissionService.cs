@@ -1,3 +1,6 @@
+using EduBackend.Source.Model.DTO.Common;
+using EduBackend.Source.Model.DTO.Permission;
+
 namespace EduBackend.Source.Modules.Permission;
 
 public class PermissionService : IPermissionService
@@ -11,4 +14,9 @@ public class PermissionService : IPermissionService
 
   public Task<IEnumerable<string>> GetPermissionNamesByUserId(long userId) =>
     _permissionRepository.GetNamesByUserId(userId);
+
+  public Task<DataPageDto<PermissionDto>> FilterPermissions(int page, int pageSize)
+  {
+    return _permissionRepository.Filter(page, pageSize);
+  }
 }

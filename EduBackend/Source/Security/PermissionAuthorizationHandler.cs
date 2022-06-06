@@ -1,4 +1,4 @@
-using System.Security.Claims;
+using EduBackend.Source.Common;
 using EduBackend.Source.Exception;
 using EduBackend.Source.Exception.Http;
 using EduBackend.Source.Modules.Permission;
@@ -20,7 +20,7 @@ internal class PermissionAuthorizationHandler : AuthorizationHandler<PermissionR
     AuthorizationHandlerContext context,
     PermissionRequirement requirement)
   {
-    var userIdPayload = context.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)
+    var userIdPayload = context.User.Claims.FirstOrDefault(e => e.Type == AppClaimTypes.UserId)
       ?.Value;
     if (userIdPayload is null)
     {

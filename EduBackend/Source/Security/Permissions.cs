@@ -1,3 +1,5 @@
+using EduBackend.Source.Common;
+
 namespace EduBackend.Source.Security;
 
 public static class AppAction
@@ -29,5 +31,5 @@ public static class AppResource
 public record AppPermission(string Description, string Action, string Resource)
 {
     public string Name => NameFor(Action, Resource);
-    public static string NameFor(string action, string resource) => $"{resource}.{action}";
+    public static string NameFor(string action, string resource) => $"{AppClaimTypes.Permission}.{resource}.{action}";
 }

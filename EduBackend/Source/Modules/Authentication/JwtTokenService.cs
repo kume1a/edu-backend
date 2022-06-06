@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using EduBackend.Source.Common;
 using EduBackend.Source.Exception.Http;
 using EduBackend.Source.Model.Common;
 using Microsoft.IdentityModel.Tokens;
@@ -35,8 +36,8 @@ public class JwtTokenService
   {
     var claims = new List<Claim>
     {
-      new(ClaimTypes.Email, payload.Email),
-      new(ClaimTypes.NameIdentifier, payload.UserId.ToString()),
+      new(AppClaimTypes.Email, payload.Email),
+      new(AppClaimTypes.UserId, payload.UserId.ToString()),
     };
 
     var tokenDescriptor = new SecurityTokenDescriptor

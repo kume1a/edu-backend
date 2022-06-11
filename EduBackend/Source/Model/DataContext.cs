@@ -12,6 +12,7 @@ public class DataContext : IdentityDbContext<User, Role, long,
   public DbSet<Permission> Permissions { get; set; }
   public DbSet<Role> Roles { get; set; }
   public DbSet<User> Users { get; set; }
+  public DbSet<RefreshToken> RefreshTokens { get; set; }
 
   public DataContext(DbContextOptions<DataContext> options) : base(options)
   {
@@ -51,5 +52,10 @@ public class DataContext : IdentityDbContext<User, Role, long,
       .WithOne(permission => permission.Role)
       .HasForeignKey(role => role.RoleId)
       .IsRequired();
+    
+    modelBuilder.Entity<RefreshToken>()
+      .Property(e => e.CreatedAt)
+      .HasDefaultValueSql("NOW()")
+      .ValueGeneratedOnAdd();
   }
 }

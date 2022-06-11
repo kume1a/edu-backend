@@ -7,5 +7,8 @@ public interface IUserService
   public Task ValidateDuplicateEmail(string email);
 
   public Task ValidateDuplicateUsername(string username);
+  
   public Task<Model.Entity.User> GetUserByEmail(string email);
+
+  public Task AddRefreshTokenByUserId(long userId, string refreshToken);
 }

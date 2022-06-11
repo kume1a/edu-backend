@@ -38,6 +38,8 @@ public class AuthenticationService : IAuthenticationService
     var accessToken = _jwtTokenService.GenerateAccessToken(tokenPayload);
     var refreshToken = _jwtTokenService.GenerateRefreshToken(tokenPayload);
 
+    await _userService.AddRefreshTokenByUserId(user.Id, refreshToken);
+
     return new AuthenticationPayloadDto
     {
       AccessToken = accessToken,
@@ -55,6 +57,8 @@ public class AuthenticationService : IAuthenticationService
     var tokenPayload = new AuthenticationTokenPayload(user.Email, user.Id);
     var accessToken = _jwtTokenService.GenerateAccessToken(tokenPayload);
     var refreshToken = _jwtTokenService.GenerateRefreshToken(tokenPayload);
+    
+    await _userService.AddRefreshTokenByUserId(user.Id, refreshToken);
 
     return new AuthenticationPayloadDto
     {

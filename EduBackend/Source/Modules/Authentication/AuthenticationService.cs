@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace EduBackend.Source.Modules.Authentication;
 
-public class AuthenticationService
+public class AuthenticationService : IAuthenticationService
 {
   private readonly SignInManager<Model.Entity.User> _signInManager;
   private readonly JwtTokenService _jwtTokenService;
@@ -27,7 +27,7 @@ public class AuthenticationService
   public async Task<AuthenticationPayloadDto> SignIn(string email, string password)
   {
     var user = await _userService.GetUserByEmail(email);
-    
+
     var signInResult = await _signInManager.CheckPasswordSignInAsync(user, password, false);
     if (!signInResult.Succeeded)
     {
@@ -36,11 +36,12 @@ public class AuthenticationService
 
     var tokenPayload = new AuthenticationTokenPayload(user.Email, user.Id);
     var accessToken = _jwtTokenService.GenerateAccessToken(tokenPayload);
+    var refreshToken = _jwtTokenService.GenerateRefreshToken(tokenPayload);
 
     return new AuthenticationPayloadDto
     {
       AccessToken = accessToken,
-      RefreshToken = ""
+      RefreshToken = refreshToken
     };
   }
 
@@ -48,16 +49,17 @@ public class AuthenticationService
   {
     await _userService.ValidateDuplicateEmail(email);
     await _userService.ValidateDuplicateUsername(username);
-    
+
     var user = await _userService.CreateUser(username, email, password);
 
     var tokenPayload = new AuthenticationTokenPayload(user.Email, user.Id);
     var accessToken = _jwtTokenService.GenerateAccessToken(tokenPayload);
+    var refreshToken = _jwtTokenService.GenerateRefreshToken(tokenPayload);
 
     return new AuthenticationPayloadDto
     {
       AccessToken = accessToken,
-      RefreshToken = ""
+      RefreshToken = refreshToken
     };
   }
 }

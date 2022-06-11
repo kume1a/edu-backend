@@ -12,7 +12,7 @@ public static class Startup
     IConfiguration configuration)
   {
     services.AddScoped<JwtTokenService>()
-      .AddScoped<AuthenticationService>()
+      .AddScoped<IAuthenticationService, AuthenticationService>()
       .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
       .AddJwtBearer(
         JwtBearerDefaults.AuthenticationScheme,

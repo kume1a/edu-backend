@@ -9,9 +9,9 @@ namespace EduBackend.Source.Modules.Authentication;
 [AllowAnonymous]
 public class AuthenticationController : ControllerBase
 {
-  private readonly AuthenticationService _authenticationService;
+  private readonly IAuthenticationService _authenticationService;
 
-  public AuthenticationController(AuthenticationService authenticationService)
+  public AuthenticationController(IAuthenticationService authenticationService)
   {
     _authenticationService = authenticationService;
   }

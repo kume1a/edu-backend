@@ -12,6 +12,8 @@ public class JwtTokenService
 {
   private readonly SigningCredentials _accessTokenSigningCredentials;
   private readonly int _accessTokenExpirationInMinutes;
+  private readonly SigningCredentials _refreshTokenSigningCredentials;
+  private readonly int _refreshTokenExpirationInMinutes;
 
   public JwtTokenService(IConfiguration configuration)
   {
@@ -26,13 +28,48 @@ public class JwtTokenService
       configuration["JwtConfig:AccessTokenExpirationInMinutes"],
       out _accessTokenExpirationInMinutes
     );
-    if (!didParseAccessTokenExpiration)
+
+    var refreshTokenKey = new SymmetricSecurityKey(
+      Encoding.UTF8.GetBytes(configuration["JwtConfig:RefreshTokenSecret"])
+    );
+    _refreshTokenSigningCredentials = new SigningCredentials(
+      refreshTokenKey,
+      SecurityAlgorithms.HmacSha512Signature
+    );
+    var didParseRefreshTokenExpiration = int.TryParse(
+      configuration["JwtConfig:RefreshTokenExpirationInMinutes"],
+      out _refreshTokenExpirationInMinutes
+    );
+
+    if (!didParseRefreshTokenExpiration || !didParseAccessTokenExpiration)
     {
       throw new InternalServerException();
     }
   }
 
   public string GenerateAccessToken(AuthenticationTokenPayload payload)
+  {
+    return GenerateJwtToken(
+      payload,
+      _accessTokenExpirationInMinutes,
+      _accessTokenSigningCredentials
+    );
+  }
+
+  public string GenerateRefreshToken(AuthenticationTokenPayload payload)
+  {
+    return GenerateJwtToken(
+      payload,
+      _refreshTokenExpirationInMinutes,
+      _refreshTokenSigningCredentials
+    );
+  }
+
+  private static string GenerateJwtToken
+  (
+    AuthenticationTokenPayload payload,
+    int expirationInMinutes,
+    SigningCredentials signingCredentials)
   {
     var claims = new List<Claim>
     {
@@ -43,8 +80,8 @@ public class JwtTokenService
     var tokenDescriptor = new SecurityTokenDescriptor
     {
       Subject = new ClaimsIdentity(claims),
-      Expires = DateTime.Now.AddMinutes(_accessTokenExpirationInMinutes),
-      SigningCredentials = _accessTokenSigningCredentials,
+      Expires = DateTime.Now.AddMinutes(expirationInMinutes),
+      SigningCredentials = signingCredentials
     };
 
     var tokenHandler = new JwtSecurityTokenHandler();

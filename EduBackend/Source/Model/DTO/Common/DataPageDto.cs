@@ -18,7 +18,7 @@ public class DataPageDto<T>
   {
     var totalCount = source.Count();
     var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
-    var data = await source.Skip(page * pageSize).Take(pageSize).ToListAsync();
+    var data = await source.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
 
     return new DataPageDto<T>(page, pageSize, totalCount, totalPages, data);
   }

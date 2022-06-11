@@ -40,6 +40,11 @@ public class DataContext : IdentityDbContext<User, Role, long,
       .WithMany(role => role.Permissions)
       .HasForeignKey(permission => permission.RoleId)
       .IsRequired();
+
+    modelBuilder.Entity<Permission>()
+      .Property(e => e.CreatedAt)
+      .HasDefaultValueSql("NOW()")
+      .ValueGeneratedOnAdd();
     
     modelBuilder.Entity<Role>()
       .HasMany(role => role.Permissions)

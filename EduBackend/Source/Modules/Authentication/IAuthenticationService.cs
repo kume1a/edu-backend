@@ -5,9 +5,9 @@ namespace EduBackend.Source.Modules.Authentication;
 
 public interface IAuthenticationService
 {
-  public Task<AuthenticationPayloadDto> SignIn(string email, string password);
+  Task<AuthenticationPayloadDto> SignIn(string email, string password);
 
-  public Task<AuthenticationPayloadDto> SignUp(string username, string email, string password);
+  Task<AuthenticationPayloadDto> SignUp(string username, string email, string password);
 
-  public Task<AuthenticationPayloadDto> Refresh(string refreshToken);
+  Task<AuthenticationPayloadDto> Refresh(string refreshToken);
 }

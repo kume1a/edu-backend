@@ -2,10 +2,11 @@ namespace EduBackend.Source.Exception;
 
 public static class ExceptionMessageCode
 {
-  public static readonly string InternalServerException = nameof(InternalServerException);
-  public static readonly string PermissionDenied = nameof(PermissionDenied);
-  public static readonly string InvalidEmailOrPassword = nameof(InvalidEmailOrPassword);
-  public static readonly string EmailAlreadyInUse = nameof(EmailAlreadyInUse);
-  public static readonly string UsernameAlreadyInUse = nameof(UsernameAlreadyInUse);
-  public static readonly string InvalidToken = nameof(InvalidToken);
+  public const string InternalServerException = nameof(InternalServerException);
+  public const string PermissionDenied = nameof(PermissionDenied);
+  public const string InvalidEmailOrPassword = nameof(InvalidEmailOrPassword);
+  public const string EmailAlreadyInUse = nameof(EmailAlreadyInUse);
+  public const string UsernameAlreadyInUse = nameof(UsernameAlreadyInUse);
+  public const string InvalidToken = nameof(InvalidToken);
+  public const string RefreshTokenReuse = nameof(RefreshTokenReuse);
 }

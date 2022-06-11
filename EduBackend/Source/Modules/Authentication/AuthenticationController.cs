@@ -31,4 +31,12 @@ public class AuthenticationController : ControllerBase
 
     return Ok(result);
   }
+
+  [HttpPost("Refresh")]
+  public async Task<ActionResult<AuthenticationPayloadDto>> Refresh([FromBody] RefreshTokenDto body)
+  {
+    var result = await _authenticationService.Refresh(body.RefreshToken);
+
+    return Ok(result);
+  }
 }

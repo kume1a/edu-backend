@@ -66,4 +66,39 @@ public class AuthenticationService : IAuthenticationService
       RefreshToken = refreshToken
     };
   }
+
+  public async Task<AuthenticationPayloadDto> Refresh(string refreshToken)
+  {
+    var userIdEmail = await _userService.GetUserIdByRefreshToken(refreshToken);
+    if (userIdEmail is null)
+    {
+      var decodedPayload = _jwtTokenService.DecodeToken(refreshToken);
+      if (decodedPayload is null)
+      {
+        throw new ForbiddenException(ExceptionMessageCode.RefreshTokenReuse);
+      }
+      
+      await _userService.ClearRefreshTokensByUserId(decodedPayload.UserId);
+      throw new ForbiddenException(ExceptionMessageCode.RefreshTokenReuse);
+    }
+
+    var tokenPayload = new AuthenticationTokenPayload(userIdEmail.Email, userIdEmail.UserId);
+    var newAccessToken = _jwtTokenService.GenerateAccessToken(tokenPayload);
+    var newRefreshToken = _jwtTokenService.GenerateAccessToken(tokenPayload);
+
+    if (!_jwtTokenService.ValidateRefreshToken(refreshToken))
+    {
+      await _userService.DeleteRefreshToken(refreshToken);
+      throw new ForbiddenException(ExceptionMessageCode.InvalidToken);
+    }
+
+    await _userService.DeleteRefreshToken(refreshToken);
+    await _userService.AddRefreshTokenByUserId(userIdEmail.UserId, newRefreshToken);
+
+    return new AuthenticationPayloadDto
+    {
+      AccessToken = newAccessToken,
+      RefreshToken = newRefreshToken
+    };
+  }
 }

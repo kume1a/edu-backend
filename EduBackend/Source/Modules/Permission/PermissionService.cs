@@ -13,7 +13,7 @@ public class PermissionService : IPermissionService
   }
 
   public Task<IEnumerable<string>> GetPermissionNamesByUserId(long userId) =>
-    _permissionRepository.GetNamesByUserId(userId);
+    _permissionRepository.GetClaimValuesByUserId(userId);
 
   public Task<DataPageDto<PermissionDto>> FilterPermissions(int page, int pageSize)
   {

@@ -5,6 +5,6 @@ namespace EduBackend.Source.Modules.Permission;
 
 public interface IPermissionRepository
 {
-  public Task<IEnumerable<string>> GetNamesByUserId(long userId);
+  public Task<IEnumerable<string>> GetClaimValuesByUserId(long userId);
   public Task<DataPageDto<PermissionDto>> Filter(int page, int pageSize);
 }

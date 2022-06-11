@@ -24,11 +24,17 @@ namespace EduBackend.Migrations
 
             modelBuilder.Entity("EduBackend.Source.Model.Entity.Permission", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAddOrUpdate()
@@ -37,13 +43,14 @@ namespace EduBackend.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<long>("RoleId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permissions");
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("EduBackend.Source.Model.Entity.Role", b =>
@@ -73,29 +80,6 @@ namespace EduBackend.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
-                });
-
-            modelBuilder.Entity("EduBackend.Source.Model.Entity.RolePermission", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("PermissionId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("RoleId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PermissionId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("RolePermissions");
                 });
 
             modelBuilder.Entity("EduBackend.Source.Model.Entity.User", b =>
@@ -180,30 +164,6 @@ namespace EduBackend.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ClaimType")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ClaimValue")
-                        .HasColumnType("text");
-
-                    b.Property<long>("RoleId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
                 {
                     b.Property<int>("Id")
@@ -268,21 +228,13 @@ namespace EduBackend.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("EduBackend.Source.Model.Entity.RolePermission", b =>
+            modelBuilder.Entity("EduBackend.Source.Model.Entity.Permission", b =>
                 {
-                    b.HasOne("EduBackend.Source.Model.Entity.Permission", "Permission")
-                        .WithMany("RolePermissions")
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("EduBackend.Source.Model.Entity.Role", "Role")
-                        .WithMany("RolePermissions")
+                        .WithMany("Permissions")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Permission");
 
                     b.Navigation("Role");
                 });
@@ -304,15 +256,6 @@ namespace EduBackend.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
-                {
-                    b.HasOne("EduBackend.Source.Model.Entity.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
@@ -342,14 +285,9 @@ namespace EduBackend.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("EduBackend.Source.Model.Entity.Permission", b =>
-                {
-                    b.Navigation("RolePermissions");
-                });
-
             modelBuilder.Entity("EduBackend.Source.Model.Entity.Role", b =>
                 {
-                    b.Navigation("RolePermissions");
+                    b.Navigation("Permissions");
 
                     b.Navigation("UserRoles");
                 });

@@ -1,5 +1,6 @@
 using EduBackend.Source.Model.DTO.Common;
 using EduBackend.Source.Model.DTO.Permission;
+using EduBackend.Source.Security;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduBackend.Source.Modules.Permission;
@@ -16,6 +17,7 @@ public class PermissionController : ControllerBase
   }
 
   [HttpGet]
+  [RequirePermission(AppAction.Read, AppResource.Permissions)]
   public async Task<DataPageDto<PermissionDto>> GetPermissions
   (
     [FromQuery] FilterPermissionDto query)

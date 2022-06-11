@@ -1,3 +1,4 @@
+using EduBackend.Source.Common;
 using EduBackend.Source.Model;
 using EduBackend.Source.Model.DTO.Common;
 using EduBackend.Source.Model.DTO.Permission;
@@ -14,14 +15,15 @@ public class PermissionRepository : IPermissionRepository
     _db = db;
   }
 
-  public async Task<IEnumerable<string>> GetNamesByUserId(long userId)
+  public async Task<IEnumerable<string>> GetClaimValuesByUserId(long userId)
   {
     return await _db.UserRoles.Where(userRole => userRole.UserId == userId)
       .Include(userRole => userRole.Role)
-      .ThenInclude(role => role.RolePermissions)
-      .ThenInclude(rolePermission => rolePermission.Permission)
+      .ThenInclude(role => role.Permissions)
       .SelectMany(
-        userRole => userRole.Role.RolePermissions.Select(rp => rp.Permission.Name)
+        userRole => userRole.Role.Permissions
+          .Where(rolePermission => rolePermission.ClaimType == AppClaimTypes.Permission)
+          .Select(permission => permission.ClaimValue)
       )
       .ToListAsync();
   }
@@ -34,7 +36,7 @@ public class PermissionRepository : IPermissionRepository
         permission => new PermissionDto
         {
           Id = permission.Id,
-          Permission = permission.Name,
+          Permission = permission.ClaimValue,
           Description = permission.Description
         }
       );

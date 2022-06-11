@@ -1,17 +1,14 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace EduBackend.Source.Model.Entity;
 
-public class Permission
+public class Permission : IdentityRoleClaim<long>
 {
-  public long Id { get; set; }
-
-  public string Name { get; set; }
-
   public string? Description { get; set; }
-  
-  [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-  public DateTime CreatedAt{ get; set; }
 
-  public ICollection<RolePermission> RolePermissions { get; set; }
+  [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+  public DateTime CreatedAt { get; set; }
+
+  public Role Role { get; set; }
 }

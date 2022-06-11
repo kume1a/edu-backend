@@ -7,10 +7,11 @@ namespace EduBackend.Source.Model;
 
 public class DataContext : IdentityDbContext<User, Role, long,
   IdentityUserClaim<long>, UserRole,
-  IdentityUserLogin<long>, IdentityRoleClaim<long>, IdentityUserToken<long>>
+  IdentityUserLogin<long>, Permission, IdentityUserToken<long>>
 {
   public DbSet<Permission> Permissions { get; set; }
-  public DbSet<RolePermission> RolePermissions { get; set; }
+  public DbSet<Role> Roles { get; set; }
+  public DbSet<User> Users { get; set; }
 
   public DataContext(DbContextOptions<DataContext> options) : base(options)
   {
@@ -34,16 +35,16 @@ public class DataContext : IdentityDbContext<User, Role, long,
       .HasForeignKey(userRole => userRole.RoleId)
       .IsRequired();
 
-    modelBuilder.Entity<Role>()
-      .HasMany(role => role.RolePermissions)
-      .WithOne(rolePermission => rolePermission.Role)
-      .HasForeignKey(rolePermission => rolePermission.RoleId)
-      .IsRequired();
-
     modelBuilder.Entity<Permission>()
-      .HasMany(permission => permission.RolePermissions)
-      .WithOne(rolePermission => rolePermission.Permission)
-      .HasForeignKey(rolePermission => rolePermission.PermissionId)
+      .HasOne(permission => permission.Role)
+      .WithMany(role => role.Permissions)
+      .HasForeignKey(permission => permission.RoleId)
+      .IsRequired();
+    
+    modelBuilder.Entity<Role>()
+      .HasMany(role => role.Permissions)
+      .WithOne(permission => permission.Role)
+      .HasForeignKey(role => role.RoleId)
       .IsRequired();
   }
 }

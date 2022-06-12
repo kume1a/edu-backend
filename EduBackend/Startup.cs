@@ -1,8 +1,10 @@
 using EduBackend.Source.Config;
 using EduBackend.Source.Middleware;
 using EduBackend.Source.Model;
+using EduBackend.Source.Model.Mapper;
 using EduBackend.Source.Modules.Authentication;
 using EduBackend.Source.Modules.Permission;
+using EduBackend.Source.Modules.Role;
 using EduBackend.Source.Modules.User;
 using EduBackend.Source.Security;
 using Microsoft.AspNetCore.Authorization;
@@ -29,10 +31,12 @@ builder.Services
   .AddDbContext<DataContext>(
     o => o.UseNpgsql(builder.Configuration.GetConnectionString("Postgresql"))
   )
+  .AddMapperModule()
+  .AddSecurityModule()
   .AddAuthenticationModule(builder.Configuration)
   .AddPermissionModule()
   .AddUserModule()
-  .AddSecurityModule();
+  .AddRoleModule();
 
 var app = builder.Build();
 

@@ -1,5 +1,6 @@
 using EduBackend.Source.Model.DTO.Common;
 using EduBackend.Source.Model.DTO.Role;
+using EduBackend.Source.Security;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduBackend.Source.Modules.Role;
@@ -16,6 +17,7 @@ public class RoleController : ControllerBase
   }
 
   [HttpPost]
+  [RequirePermission(AppAction.Create, AppResource.Roles)]
   public async Task<ActionResult<RoleDto>> CreateRole([FromBody] CreateRoleDto body)
   {
     var role = await _roleService.CreateRole(body.Name, body.Permissions);
@@ -24,6 +26,7 @@ public class RoleController : ControllerBase
   }
 
   [HttpPatch("{id}")]
+  [RequirePermission(AppAction.Update, AppResource.Roles)]
   public async Task<ActionResult<RoleDto>> UpdateRole(
     [FromRoute] long id,
     [FromBody] UpdateRoleDto body)
@@ -38,6 +41,7 @@ public class RoleController : ControllerBase
   }
   
   [HttpGet]
+  [RequirePermission(AppAction.Read, AppResource.Roles)]
   public async Task<ActionResult<DataPageDto<RoleDto>>> GetRoles([FromQuery] FilterRolesDto query)
   {
     var role = await _roleService.FilterRoles(query.Page, query.PageSize);
@@ -46,6 +50,7 @@ public class RoleController : ControllerBase
   }
 
   [HttpGet("{id}")]
+  [RequirePermission(AppAction.Read, AppResource.Roles)]
   public async Task<ActionResult<RoleDto>> GetRole([FromRoute] long id)
   {
     var role = await _roleService.GetRoleById(id);

@@ -17,17 +17,14 @@ public interface IAuthenticationService
 
   Task RecoverPassword(string uuid, string newPassword);
 
-  Task RequestSignUp(string email);
+  Task ConfirmAccountEmail(long userId, string code);
 
-  Task<SignUpConfirmVerificationCodeResponseDto> SignUpConfirmVerificationCode(
+  Task<AuthenticationPayloadDto> SignUp(
     string email,
-    string code);
-
-  Task<AuthenticationPayloadDto> FinishSignUp(
-    string uuid,
-    string firstName,
-    string lastName,
+    string username,
     Gender gender,
     DateTime birthDate,
     string password);
+
+  Task ResendConfirmAccountEmailCode(long userId);
 }

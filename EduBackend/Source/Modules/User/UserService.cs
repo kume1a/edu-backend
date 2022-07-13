@@ -17,14 +17,13 @@ public class UserService : IUserService
   }
 
   public Task<Model.Entity.User> CreateUser(
-    string firstName,
-    string lastName,
     string email,
+    string username,
     DateTime birthDate,
     Gender gender,
     string password)
   {
-    return _userRepository.CreateEntity(firstName, lastName, email, birthDate, gender, password);
+    return _userRepository.CreateEntity(email, username, birthDate, gender, password);
   }
 
   public async Task ValidateDuplicateEmail(string email)
@@ -77,5 +76,16 @@ public class UserService : IUserService
     {
       throw new NotFoundException(ExceptionMessageCode.UserNotFound);
     }
+  }
+
+  public async Task<string> GetUserEmailById(long userId)
+  {
+    var email = await _userRepository.GetEmailById(userId);
+    if (email is null)
+    {
+      throw new NotFoundException(ExceptionMessageCode.UserNotFound);
+    }
+
+    return email;
   }
 }

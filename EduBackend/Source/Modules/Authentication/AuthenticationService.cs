@@ -4,8 +4,8 @@ using EduBackend.Source.Exception.Http;
 using EduBackend.Source.Model.Common;
 using EduBackend.Source.Model.DTO.Authentication;
 using EduBackend.Source.Model.Enum;
+using EduBackend.Source.Modules.Authentication.AccountVerificationCode;
 using EduBackend.Source.Modules.Authentication.RecoverPasswordRequest;
-using EduBackend.Source.Modules.Authentication.SignUpRequest;
 using EduBackend.Source.Modules.User;
 using Microsoft.AspNetCore.Identity;
 
@@ -18,7 +18,7 @@ public class AuthenticationService : IAuthenticationService
   private readonly IUserService _userService;
   private readonly IRecoverPasswordRequestService _recoverPasswordRequestService;
   private readonly IEmailClient _emailClient;
-  private readonly ISignUpRequestService _signUpRequestService;
+  private readonly IAccountVerificationCodeService _accountVerificationCodeService;
 
   public AuthenticationService(
     SignInManager<Model.Entity.User> signInManager,
@@ -26,14 +26,14 @@ public class AuthenticationService : IAuthenticationService
     IUserService userService,
     IRecoverPasswordRequestService recoverPasswordRequestService,
     IEmailClient emailClient,
-    ISignUpRequestService signUpRequestService)
+    IAccountVerificationCodeService accountVerificationCodeService)
   {
     _signInManager = signInManager;
     _jwtTokenService = jwtTokenService;
     _userService = userService;
     _recoverPasswordRequestService = recoverPasswordRequestService;
     _emailClient = emailClient;
-    _signUpRequestService = signUpRequestService;
+    _accountVerificationCodeService = accountVerificationCodeService;
   }
 
   public async Task<AuthenticationPayloadDto> SignIn(string email, string password)
@@ -151,76 +151,57 @@ public class AuthenticationService : IAuthenticationService
     await _recoverPasswordRequestService.DeleteRecoverPasswordRequest(recoverPasswordRequest);
   }
 
-  public async Task RequestSignUp(string email)
+  public async Task ConfirmAccountEmail(long userId, string code)
   {
-    await _userService.ValidateDuplicateEmail(email);
-    
-    var random = new Random();
-    var code = random.Next(10000, 99999).ToString();
-    
-    await _signUpRequestService.CreateSignUpRequest(email, code);
-
-    await _emailClient.SendEmailAsync(email, "Sign up", code);
-  }
-
-  public async Task<SignUpConfirmVerificationCodeResponseDto> SignUpConfirmVerificationCode(
-    string email,
-    string code)
-  {
-    var signUpRequest = await _signUpRequestService.GetSignUpRequestByEmail(email);
-    
-    if (signUpRequest.Code != code)
+    var accountVerificationCode = await _accountVerificationCodeService.GetAccountVerificationCodeByUserId(userId);
+    if (accountVerificationCode.Code != code)
     {
-      throw new ForbiddenException(ExceptionMessageCode.InvalidVerificationCode);
+      throw new BadRequestException(ExceptionMessageCode.InvalidVerificationCode);
     }
 
-    var uuid = Guid.NewGuid().ToString();
-
-    await _signUpRequestService.MarkSignUpRequestAsVerified(
-      signUpRequest.Id,
-      uuid
-    );
-
-    return new SignUpConfirmVerificationCodeResponseDto
-    {
-      Uuid = uuid
-    };
+    await _accountVerificationCodeService.MarkAccountVerificationCodeAsConfirmed(accountVerificationCode.Id);
   }
 
-  public async Task<AuthenticationPayloadDto> FinishSignUp(
-    string uuid,
-    string firstName,
-    string lastName,
-    Gender gender,
-    DateTime birthDate,
+  public async Task<AuthenticationPayloadDto> SignUp(string email, string username, Gender gender, DateTime birthDate,
     string password)
   {
-    var signUpRequest = await _signUpRequestService.GetSignUpRequestByUuid(uuid);
-    if (!signUpRequest.IsVerified)
-    {
-      throw new BadRequestException(ExceptionMessageCode.RequestNotVerified);
-    }
-
     var user = await _userService.CreateUser(
-      firstName,
-      lastName,
-      signUpRequest.Email,
+      email,
+      username,
       birthDate,
       gender,
       password
     );
+
+    var random = new Random();
+    var verificationCode = random.Next(10000, 99999).ToString();
+
+    await _accountVerificationCodeService.UpsertAccountVerificationCode(verificationCode, user.Id);
+
+    await _emailClient.SendEmailAsync(user.Email, "Verification Code", verificationCode);
 
     var tokenPayload = new AuthenticationTokenPayload(user.Email, user.Id);
     var accessToken = _jwtTokenService.GenerateAccessToken(tokenPayload);
     var refreshToken = _jwtTokenService.GenerateRefreshToken(tokenPayload);
 
     await _userService.AddRefreshTokenByUserId(user.Id, refreshToken);
-    await _signUpRequestService.DeleteSignUpRequest(signUpRequest);
 
     return new AuthenticationPayloadDto
     {
       AccessToken = accessToken,
       RefreshToken = refreshToken
     };
+  }
+
+  public async Task ResendConfirmAccountEmailCode(long userId)
+  {
+    var userEmail = await _userService.GetUserEmailById(userId);
+
+    var random = new Random();
+    var verificationCode = random.Next(10000, 99999).ToString();
+
+    await _accountVerificationCodeService.UpsertAccountVerificationCode(verificationCode, userId);
+
+    await _emailClient.SendEmailAsync(userEmail, "Verification Code", verificationCode);
   }
 }

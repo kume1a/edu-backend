@@ -1,6 +1,6 @@
 namespace EduBackend.Source.Model.DTO.Authentication;
 
-public class SignUpConfirmVerificationCodeResponseDto
+public class ConfirmAccountEmailResponseDto
 {
   public string Uuid { get; set; }
 }

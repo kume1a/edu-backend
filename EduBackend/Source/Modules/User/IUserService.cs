@@ -6,9 +6,8 @@ namespace EduBackend.Source.Modules.User;
 public interface IUserService
 {
   Task<Model.Entity.User> CreateUser(
-    string firstName,
-    string lastName,
     string email,
+    string username,
     DateTime birthDate,
     Gender gender,
     string password);
@@ -20,4 +19,5 @@ public interface IUserService
   Task DeleteRefreshToken(string refreshToken);
   Task UpdateUserPasswordByEmail(string email, string password);
   Task ValidateUserByEmail(string email);
+  Task<string> GetUserEmailById(long userId);
 }

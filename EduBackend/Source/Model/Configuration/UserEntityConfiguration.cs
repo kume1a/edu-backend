@@ -13,11 +13,7 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
       .HasForeignKey(userRole => userRole.UserId)
       .IsRequired();
 
-    builder.Property(entity => entity.FirstName)
-      .IsRequired()
-      .HasMaxLength(512);
-
-    builder.Property(entity => entity.LastName)
+    builder.Property(entity => entity.Username)
       .IsRequired()
       .HasMaxLength(512);
 

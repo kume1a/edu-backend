@@ -15,32 +15,31 @@ public class AuthenticationController : ControllerBase
   {
     _authenticationService = authenticationService;
   }
-
-  [HttpPost("SignUp/Request")]
-  public async Task<ActionResult> RequestSignUp([FromBody] RequestSignUpDto body)
+  
+  [HttpPost("ResendConfirmAccountEmailCode")]
+  public async Task<ActionResult> ResendConfirmAccountEmailCode()
   {
-    await _authenticationService.RequestSignUp(body.Email);
+    await _authenticationService.ResendConfirmAccountEmailCode(-1); // TODO fix user id
 
     return Ok();
   }
 
-  [HttpPost("SignUp/ConfirmVerificationCode")]
-  public async Task<ActionResult> SignUpConfirmVerificationCode(
-    [FromBody] SignUpConfirmVerificationCodeDto body)
+  [HttpPost("ConfirmAccountEmail")]
+  public async Task<ActionResult> ConfirmAccountEmail(
+    [FromBody] ConfirmAccountEmailDto body)
   {
-    var result = await _authenticationService.SignUpConfirmVerificationCode(body.Email, body.Code);
+    await _authenticationService.ConfirmAccountEmail(-1, body.Code); // TODO fix user id
 
-    return Ok(result);
+    return Ok();
   }
 
   [HttpPost("SignUp")]
-  public async Task<ActionResult<AuthenticationPayloadDto>> FinishSignUp(
-    [FromBody] FinishSignUpDto body)
+  public async Task<ActionResult<AuthenticationPayloadDto>> SignUp(
+    [FromBody] SignUpDto body)
   {
-    var result = await _authenticationService.FinishSignUp(
-      body.Uuid,
-      body.FirstName,
-      body.LastName,
+    var result = await _authenticationService.SignUp(
+      body.Email,
+      body.Username,
       body.Gender,
       body.BirthDate,
       body.Password

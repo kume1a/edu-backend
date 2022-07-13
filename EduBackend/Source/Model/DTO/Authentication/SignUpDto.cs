@@ -3,16 +3,13 @@ using EduBackend.Source.Model.Enum;
 
 namespace EduBackend.Source.Model.DTO.Authentication;
 
-public class FinishSignUpDto
+public class SignUpDto
 {
-  [RegularExpression(@"(?im)^[{(]?[0-9A-F]{8}[-]?(?:[0-9A-F]{4}[-]?){3}[0-9A-F]{12}[)}]?$")]
-  public string Uuid { get; set; }
-
+  [EmailAddress, StringLength(512)]
+  public string Email { get; set; }
+  
   [StringLength(512, MinimumLength = 1)]
-  public string FirstName { get; set; }
-
-  [StringLength(512, MinimumLength = 1)]
-  public string LastName { get; set; }
+  public string Username { get; set; }
 
   public DateTime BirthDate { get; set; }
 

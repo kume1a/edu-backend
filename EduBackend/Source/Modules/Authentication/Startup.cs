@@ -1,6 +1,6 @@
 using System.Text;
+using EduBackend.Source.Modules.Authentication.AccountVerificationCode;
 using EduBackend.Source.Modules.Authentication.RecoverPasswordRequest;
-using EduBackend.Source.Modules.Authentication.SignUpRequest;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -16,8 +16,8 @@ public static class Startup
       .AddScoped<IAuthenticationService, AuthenticationService>()
       .AddScoped<IRecoverPasswordRequestRepository, RecoverPasswordRequestRepository>()
       .AddScoped<IRecoverPasswordRequestService, RecoverPasswordRequestService>()
-      .AddScoped<ISignUpRequestRepository, SignUpRequestRepository>()
-      .AddScoped<ISignUpRequestService, SignUpRequestService>()
+      .AddScoped<IAccountVerificationCodeRepository, AccountVerificationCodeRepository>()
+      .AddScoped<IAccountVerificationCodeService, AccountVerificationCodeService>()
       .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
       .AddJwtBearer(
         JwtBearerDefaults.AuthenticationScheme,

@@ -18,19 +18,13 @@ public class UserRepository : IUserRepository
     _logger = logger;
   }
 
-  public async Task<Model.Entity.User> CreateEntity(
-    string firstName,
-    string lastName,
-    string email,
-    DateTime birthDate,
-    Gender gender,
+  public async Task<Model.Entity.User> CreateEntity(string email, string username, DateTime birthDate, Gender gender,
     string password)
   {
     var user = new Model.Entity.User
     {
-      FirstName = firstName,
-      LastName = lastName,
       Email = email,
+      Username = username,
       UserName = email,
       BirthDate = birthDate,
       Gender = gender,
@@ -66,5 +60,13 @@ public class UserRepository : IUserRepository
     {
       throw new InternalServerException();
     }
+  }
+
+  public async Task<string?> GetEmailById(long userId)
+  {
+    return await _userManager.Users
+      .Where(user => user.Id == userId)
+      .Select(user => user.Email)
+      .SingleOrDefaultAsync();
   }
 }

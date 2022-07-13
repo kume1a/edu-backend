@@ -12,9 +12,8 @@ public class DataContext : IdentityDbContext<User, Role, long,
 {
   public DbSet<Permission> Permissions { get; set; }
   public DbSet<RecoverPasswordRequest> RecoverPasswordRequests { get; set; }
-  public DbSet<SignUpRequest> SignUpRequests { get; set; }
-
   public DbSet<RefreshToken> RefreshTokens { get; set; }
+  public DbSet<AccountVerificationCode> AccountVerificationCodes { get; set; }
 
   public DataContext(DbContextOptions<DataContext> options) : base(options)
   {

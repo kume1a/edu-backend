@@ -1,15 +1,18 @@
 using EduBackend.Source.Exception;
 using EduBackend.Source.Exception.Http;
+using EduBackend.Source.Model.Entity.Projection;
 
 namespace EduBackend.Source.Modules.User;
 
 public class UserService : IUserService
 {
   private readonly IUserRepository _userRepository;
+  private readonly IRefreshTokenRepository _refreshTokenRepository;
 
-  public UserService(IUserRepository userRepository)
+  public UserService(IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository)
   {
     _userRepository = userRepository;
+    _refreshTokenRepository = refreshTokenRepository;
   }
 
   public Task<Model.Entity.User> CreateUser(string username, string email, string password)
@@ -42,5 +45,25 @@ public class UserService : IUserService
     }
 
     return user;
+  }
+
+  public async Task AddRefreshTokenByUserId(long userId, string refreshToken)
+  {
+    await _refreshTokenRepository.AddRefreshTokenByUserId(userId, refreshToken);
+  }
+
+  public async Task<UserIdEmailProjection?> GetUserIdByRefreshToken(string refreshToken)
+  {
+    return await _refreshTokenRepository.GetUserIdByValue(refreshToken);
+  }
+
+  public async Task ClearRefreshTokensByUserId(long userId)
+  {
+    await _refreshTokenRepository.DeleteAllByUserId(userId);
+  }
+
+  public async Task DeleteRefreshToken(string refreshToken)
+  {
+    await _refreshTokenRepository.DeleteByValue(refreshToken);
   }
 }

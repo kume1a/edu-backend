@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+using EduBackend.Source.Model.Common;
 
 namespace EduBackend.Source.Model.DTO.Common;
 
@@ -10,17 +10,15 @@ public class DataPageDto<T>
   public int TotalPages { get; set; }
   public List<T> Data { get; set; }
 
-  public static async Task<DataPageDto<T>> fromQuery
-  (
-    IQueryable<T> source,
-    int page,
-    int pageSize)
+  public static DataPageDto<T> fromDataPage(DataPage<T> dataPage)
   {
-    var totalCount = source.Count();
-    var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
-    var data = await source.Skip(page * pageSize).Take(pageSize).ToListAsync();
-
-    return new DataPageDto<T>(page, pageSize, totalCount, totalPages, data);
+    return new DataPageDto<T>(
+      dataPage.Page,
+      dataPage.PageSize,
+      dataPage.TotalCount,
+      dataPage.TotalPages,
+      dataPage.Data
+    );
   }
 
   public DataPageDto(int page, int pageSize, int totalCount, int totalPages, List<T> data)

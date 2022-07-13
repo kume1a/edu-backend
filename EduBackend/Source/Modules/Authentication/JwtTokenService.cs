@@ -10,29 +10,117 @@ namespace EduBackend.Source.Modules.Authentication;
 
 public class JwtTokenService
 {
-  private readonly SigningCredentials _accessTokenSigningCredentials;
-  private readonly int _accessTokenExpirationInMinutes;
+  private readonly ILogger<JwtTokenService> _logger;
 
-  public JwtTokenService(IConfiguration configuration)
+  private readonly SigningCredentials _accessTokenSigningCredentials;
+  private readonly SecurityKey _accessTokenKey;
+  private readonly int _accessTokenExpirationInMinutes;
+  private readonly SigningCredentials _refreshTokenSigningCredentials;
+  private readonly SecurityKey _refreshTokenKey;
+  private readonly int _refreshTokenExpirationInMinutes;
+
+  public JwtTokenService(IConfiguration configuration, ILogger<JwtTokenService> logger)
   {
-    var accessTokenKey = new SymmetricSecurityKey(
-      Encoding.UTF8.GetBytes(configuration["JwtConfig:AccessTokenSecret"])
+    _logger = logger;
+
+    _accessTokenKey = new SymmetricSecurityKey(
+      Encoding.UTF8.GetBytes(configuration["Authentication:AccessTokenSecret"])
     );
     _accessTokenSigningCredentials = new SigningCredentials(
-      accessTokenKey,
+      _accessTokenKey,
       SecurityAlgorithms.HmacSha512Signature
     );
     var didParseAccessTokenExpiration = int.TryParse(
-      configuration["JwtConfig:AccessTokenExpirationInMinutes"],
+      configuration["Authentication:AccessTokenExpirationInMinutes"],
       out _accessTokenExpirationInMinutes
     );
-    if (!didParseAccessTokenExpiration)
+
+    _refreshTokenKey = new SymmetricSecurityKey(
+      Encoding.UTF8.GetBytes(configuration["Authentication:RefreshTokenSecret"])
+    );
+    _refreshTokenSigningCredentials = new SigningCredentials(
+      _refreshTokenKey,
+      SecurityAlgorithms.HmacSha512Signature
+    );
+    var didParseRefreshTokenExpiration = int.TryParse(
+      configuration["Authentication:RefreshTokenExpirationInMinutes"],
+      out _refreshTokenExpirationInMinutes
+    );
+
+    if (!didParseRefreshTokenExpiration || !didParseAccessTokenExpiration)
     {
       throw new InternalServerException();
     }
   }
 
+  public AuthenticationTokenPayload? DecodeToken(string token)
+  {
+    var handler = new JwtSecurityTokenHandler();
+    var jwtSecurityToken = handler.ReadJwtToken(token);
+
+    var emailClaim =
+      jwtSecurityToken.Claims.FirstOrDefault(claim => claim.Type == AppClaimTypes.Email);
+    var userIdClaim =
+      jwtSecurityToken.Claims.FirstOrDefault(claim => claim.Type == AppClaimTypes.UserId);
+
+    if (emailClaim is null || userIdClaim is null)
+    {
+      return null;
+    }
+
+    return !long.TryParse(userIdClaim.Value, out var userId)
+      ? null
+      : new AuthenticationTokenPayload(emailClaim.Value, userId);
+  }
+
+  public bool ValidateRefreshToken(string token)
+  {
+    var validationParameters = new TokenValidationParameters
+    {
+      ValidateLifetime = true,
+      ValidateAudience = false,
+      ValidateIssuer = false,
+      IssuerSigningKey = _refreshTokenKey
+    };
+
+    JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
+
+    try
+    {
+      handler.ValidateToken(token, validationParameters, out _);
+      return true;
+    }
+    catch (System.Exception e)
+    {
+      _logger.LogError("Error validating token, {Message}, {StackTrace}", e.Message, e.StackTrace);
+    }
+
+    return false;
+  }
+
   public string GenerateAccessToken(AuthenticationTokenPayload payload)
+  {
+    return GenerateJwtToken(
+      payload,
+      _accessTokenExpirationInMinutes,
+      _accessTokenSigningCredentials
+    );
+  }
+
+  public string GenerateRefreshToken(AuthenticationTokenPayload payload)
+  {
+    return GenerateJwtToken(
+      payload,
+      _refreshTokenExpirationInMinutes,
+      _refreshTokenSigningCredentials
+    );
+  }
+
+  private static string GenerateJwtToken
+  (
+    AuthenticationTokenPayload payload,
+    int expirationInMinutes,
+    SigningCredentials signingCredentials)
   {
     var claims = new List<Claim>
     {
@@ -43,8 +131,8 @@ public class JwtTokenService
     var tokenDescriptor = new SecurityTokenDescriptor
     {
       Subject = new ClaimsIdentity(claims),
-      Expires = DateTime.Now.AddMinutes(_accessTokenExpirationInMinutes),
-      SigningCredentials = _accessTokenSigningCredentials,
+      Expires = DateTime.Now.AddMinutes(expirationInMinutes),
+      SigningCredentials = signingCredentials
     };
 
     var tokenHandler = new JwtSecurityTokenHandler();

@@ -1,10 +1,16 @@
-using EduBackend.Source.Model.DTO.Common;
-using EduBackend.Source.Model.DTO.Permission;
+using EduBackend.Source.Security;
 
 namespace EduBackend.Source.Modules.Permission;
 
 public interface IPermissionRepository
 {
-  public Task<IEnumerable<string>> GetNamesByUserId(long userId);
-  public Task<DataPageDto<PermissionDto>> Filter(int page, int pageSize);
+  Task<IEnumerable<string>> GetClaimValuesByUserId(long userId);
+
+  Task<IEnumerable<Model.Entity.Permission>> CreatePermissionsWithRoleId(
+    long roleId,
+    IEnumerable<AppPermission> permissions);
+
+  Task<IEnumerable<Model.Entity.Permission>> ReplacePermissionsByRoleId(
+    long roleId,
+    IEnumerable<AppPermission> permissions);
 }

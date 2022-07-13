@@ -6,7 +6,7 @@ public class GenericException : System.Exception
 {
   public HttpStatusCode StatusCode { get; }
 
-  public GenericException(string message, HttpStatusCode statusCode) : base(message)
+  protected GenericException(string message, HttpStatusCode statusCode) : base(message)
   {
     StatusCode = statusCode;
   }

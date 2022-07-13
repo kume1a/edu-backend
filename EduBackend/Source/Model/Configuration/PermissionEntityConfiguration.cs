@@ -28,5 +28,7 @@ public class PermissionEntityConfiguration : IEntityTypeConfiguration<Permission
     builder.Property(entity => entity.ClaimValue)
       .IsRequired()
       .HasMaxLength(512);
+
+    builder.ToTable("RoleClaims");
   }
 }

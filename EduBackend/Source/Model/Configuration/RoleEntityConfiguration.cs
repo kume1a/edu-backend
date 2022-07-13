@@ -25,5 +25,7 @@ public class RoleEntityConfiguration : IEntityTypeConfiguration<Role>
       .WithOne(permission => permission.Role)
       .HasForeignKey(role => role.RoleId)
       .IsRequired();
+
+    builder.ToTable("Roles");
   }
 }

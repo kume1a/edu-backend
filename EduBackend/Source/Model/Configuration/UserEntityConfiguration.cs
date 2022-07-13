@@ -24,5 +24,7 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
     builder.Property(entity => entity.UserName)
       .IsRequired()
       .HasMaxLength(512);
+
+    builder.ToTable("Users");
   }
 }

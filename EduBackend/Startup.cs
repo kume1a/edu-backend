@@ -11,6 +11,7 @@ using EduBackend.Source.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,6 +55,12 @@ if (app.Environment.IsDevelopment())
     }
   );
 }
+
+app.UseStaticFiles(new StaticFileOptions
+{
+  FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "Assets")),
+  RequestPath = "/Assets"
+});
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors(

@@ -1,6 +1,7 @@
 using EduBackend.Source.Exception;
 using EduBackend.Source.Exception.Http;
-using EduBackend.Source.Model.Entity.Projection;
+using EduBackend.Source.Model.Enum;
+using EduBackend.Source.Model.Projection;
 
 namespace EduBackend.Source.Modules.User;
 
@@ -15,9 +16,15 @@ public class UserService : IUserService
     _refreshTokenRepository = refreshTokenRepository;
   }
 
-  public Task<Model.Entity.User> CreateUser(string username, string email, string password)
+  public Task<Model.Entity.User> CreateUser(
+    string firstName,
+    string lastName,
+    string email,
+    DateTime birthDate,
+    Gender gender,
+    string password)
   {
-    return _userRepository.CreateEntity(username, email, password);
+    return _userRepository.CreateEntity(firstName, lastName, email, birthDate, gender, password);
   }
 
   public async Task ValidateDuplicateEmail(string email)
@@ -25,14 +32,6 @@ public class UserService : IUserService
     if (await _userRepository.ExistsByEmail(email))
     {
       throw new ConflictException(ExceptionMessageCode.EmailAlreadyInUse);
-    }
-  }
-
-  public async Task ValidateDuplicateUsername(string username)
-  {
-    if (await _userRepository.ExistsByUsername(username))
-    {
-      throw new ConflictException(ExceptionMessageCode.UsernameAlreadyInUse);
     }
   }
 
@@ -65,5 +64,18 @@ public class UserService : IUserService
   public async Task DeleteRefreshToken(string refreshToken)
   {
     await _refreshTokenRepository.DeleteByValue(refreshToken);
+  }
+
+  public async Task UpdateUserPasswordByEmail(string email, string password)
+  {
+    await _userRepository.UpdatePasswordByEmail(email, password);
+  }
+
+  public async Task ValidateUserByEmail(string email)
+  {
+    if (!await _userRepository.ExistsByEmail(email))
+    {
+      throw new NotFoundException(ExceptionMessageCode.UserNotFound);
+    }
   }
 }

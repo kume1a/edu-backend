@@ -9,9 +9,8 @@ public class AccountVerificationCodeEntityConfiguration: IEntityTypeConfiguratio
   public void Configure(EntityTypeBuilder<AccountVerificationCode> builder)
   {
     builder.HasOne(accountVerificationCode => accountVerificationCode.User)
-      .WithOne(user => user.AccountVerificationCode)
-      .HasPrincipalKey<AccountVerificationCode>(e => e.UserId);
-    
+      .WithOne(user => user.AccountVerificationCode);
+
     builder.Property(entity => entity.Code)
       .HasMaxLength(5)
       .IsRequired();

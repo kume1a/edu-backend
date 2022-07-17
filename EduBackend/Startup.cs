@@ -5,6 +5,7 @@ using EduBackend.Source.Model;
 using EduBackend.Source.Model.Mapper;
 using EduBackend.Source.Modules.Authentication;
 using EduBackend.Source.Modules.Documents;
+using EduBackend.Source.Modules.Genre;
 using EduBackend.Source.Modules.Permission;
 using EduBackend.Source.Modules.Role;
 using EduBackend.Source.Modules.User;
@@ -42,7 +43,8 @@ builder.Services
   .AddPermissionModule()
   .AddUserModule()
   .AddRoleModule()
-  .AddDocumentModule();
+  .AddDocumentModule()
+  .AddGenreModule();
 
 var app = builder.Build();
 

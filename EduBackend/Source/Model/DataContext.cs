@@ -14,7 +14,9 @@ public class DataContext : IdentityDbContext<User, Role, long,
   public DbSet<RecoverPasswordRequest> RecoverPasswordRequests { get; set; }
   public DbSet<RefreshToken> RefreshTokens { get; set; }
   public DbSet<AccountVerificationCode> AccountVerificationCodes { get; set; }
-
+  public DbSet<Document> Documents { get; set; }
+  public DbSet<DocumentParagraph> DocumentParagraphs { get; set; }
+  
   public DataContext(DbContextOptions<DataContext> options) : base(options)
   {
   }

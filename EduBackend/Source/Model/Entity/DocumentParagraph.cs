@@ -14,5 +14,7 @@ public class DocumentParagraph
 
   public DateTime UpdatedAt { get; set; }
 
+  public long DocumentId { get; set; }
+
   public Document Document { get; set; }
 }

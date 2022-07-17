@@ -83,9 +83,7 @@ public class RoleService : IRoleService
   public async Task<DataPageDto<RoleDto>> FilterRoles(string? searchQuery, int page, int pageSize)
   {
     var roles = await _roleRepository.Filter(searchQuery, page, pageSize);
-
-    var mapped = roles.Data.Select(_roleMapper.DeepMap).ToList();
-
-    return new DataPageDto<RoleDto>(page, pageSize, roles.TotalCount, roles.TotalPages, mapped);
+    
+    return DataPageDto<RoleDto>.fromDataPage(roles, _roleMapper.DeepMap);
   }
 }

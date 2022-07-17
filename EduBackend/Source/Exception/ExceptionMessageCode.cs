@@ -17,4 +17,6 @@ public static class ExceptionMessageCode
   public const string RequestNotVerified = nameof(RequestNotVerified);
   public const string UserNotFound = nameof(UserNotFound);
   public const string AccountVerificationCodeNotFound = nameof(AccountVerificationCodeNotFound);
+  public const string DocumentNotFound = nameof(DocumentNotFound);
+  public const string DocumentParagraphNotFound = nameof(DocumentParagraphNotFound);
 }

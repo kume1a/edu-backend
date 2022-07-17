@@ -4,6 +4,7 @@ using EduBackend.Source.Middleware;
 using EduBackend.Source.Model;
 using EduBackend.Source.Model.Mapper;
 using EduBackend.Source.Modules.Authentication;
+using EduBackend.Source.Modules.Documents;
 using EduBackend.Source.Modules.Permission;
 using EduBackend.Source.Modules.Role;
 using EduBackend.Source.Modules.User;
@@ -40,7 +41,8 @@ builder.Services
   .AddAuthenticationModule(builder.Configuration)
   .AddPermissionModule()
   .AddUserModule()
-  .AddRoleModule();
+  .AddRoleModule()
+  .AddDocumentModule();
 
 var app = builder.Build();
 

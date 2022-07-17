@@ -8,20 +8,22 @@ public class DataPageDto<T>
   public int PageSize { get; set; }
   public int TotalCount { get; set; }
   public int TotalPages { get; set; }
-  public List<T> Data { get; set; }
+  public IEnumerable<T> Data { get; set; }
 
-  public static DataPageDto<T> fromDataPage(DataPage<T> dataPage)
+  public static DataPageDto<T> fromDataPage<TE>(DataPage<TE> dataPage, Func<TE, T> mapper)
   {
+    var mapped = dataPage.Data.Select(mapper);
+    
     return new DataPageDto<T>(
       dataPage.Page,
       dataPage.PageSize,
       dataPage.TotalCount,
       dataPage.TotalPages,
-      dataPage.Data
+      mapped
     );
   }
 
-  public DataPageDto(int page, int pageSize, int totalCount, int totalPages, List<T> data)
+  public DataPageDto(int page, int pageSize, int totalCount, int totalPages, IEnumerable<T> data)
   {
     Page = page;
     PageSize = pageSize;

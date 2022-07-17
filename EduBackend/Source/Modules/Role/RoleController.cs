@@ -45,7 +45,7 @@ public class RoleController : ControllerBase
   [RequirePermission(AppAction.Read, AppResource.Roles)]
   public async Task<ActionResult<DataPageDto<RoleDto>>> GetRoles([FromQuery] FilterRolesDto query)
   {
-    var roles = await _roleService.FilterRoles(query.searchQuery, query.Page, query.PageSize);
+    var roles = await _roleService.FilterRoles(query.SearchQuery, query.Page, query.PageSize);
 
     return Ok(roles);
   }

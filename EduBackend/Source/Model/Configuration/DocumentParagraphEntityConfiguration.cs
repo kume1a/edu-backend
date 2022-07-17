@@ -8,6 +8,8 @@ public class DocumentParagraphEntityConfiguration: IEntityTypeConfiguration<Docu
 {
   public void Configure(EntityTypeBuilder<DocumentParagraph> builder)
   {
+    builder.ToTable("DocumentParagraphs");
+    
     builder.HasOne(documentParagraph => documentParagraph.Document)
       .WithMany(document => document.Paragraphs);
 

@@ -1,4 +1,5 @@
 using System.Reflection;
+using EduBackend.Source.Model.DTO.Feedback;
 using EduBackend.Source.Model.Entity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -17,6 +18,7 @@ public class DataContext : IdentityDbContext<User, Role, long,
   public DbSet<Document> Documents { get; set; }
   public DbSet<DocumentParagraph> DocumentParagraphs { get; set; }
   public DbSet<Genre> Genres { get; set; }
+  public DbSet<Feedback> Feedback { get; set; }
 
   public DataContext(DbContextOptions<DataContext> options) : base(options)
   {

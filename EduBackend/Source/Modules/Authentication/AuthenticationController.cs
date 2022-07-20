@@ -1,3 +1,4 @@
+using EduBackend.Source.Common;
 using EduBackend.Source.Model.DTO.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,11 @@ public class AuthenticationController : ControllerBase
   {
     _authenticationService = authenticationService;
   }
-  
+
   [HttpPost("ResendConfirmAccountEmailCode")]
   public async Task<ActionResult> ResendConfirmAccountEmailCode()
   {
-    await _authenticationService.ResendConfirmAccountEmailCode(-1); // TODO fix user id
+    await _authenticationService.ResendConfirmAccountEmailCode(User.GetUserId());
 
     return Ok();
   }
@@ -28,7 +29,7 @@ public class AuthenticationController : ControllerBase
   public async Task<ActionResult> ConfirmAccountEmail(
     [FromBody] ConfirmAccountEmailDto body)
   {
-    await _authenticationService.ConfirmAccountEmail(-1, body.Code); // TODO fix user id
+    await _authenticationService.ConfirmAccountEmail(User.GetUserId(), body.Code);
 
     return Ok();
   }

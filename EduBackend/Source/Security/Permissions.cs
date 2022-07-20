@@ -18,27 +18,13 @@ public static class AppResource
 
 public static class AppPermissions
 {
-  public static readonly AppPermission ReadPermission =
-    new("Read permission", AppAction.Read, AppResource.Permissions);
-
-  public static readonly AppPermission ReadRole =
-    new("Read role", AppAction.Read, AppResource.Roles);
-
-  public static readonly AppPermission CreateRole =
-    new("Create role", AppAction.Create, AppResource.Roles);
-
-  public static readonly AppPermission UpdateRole =
-    new("Update role", AppAction.Update, AppResource.Roles);
-
-  public static readonly AppPermission DeleteRole =
-    new("Delete role", AppAction.Delete, AppResource.Roles);
-  
-  public static readonly AppPermission[] All = {
-    ReadPermission,
-    ReadRole,
-    CreateRole,
-    UpdateRole,
-    DeleteRole,
+  public static readonly AppPermission[] All =
+  {
+    new("Read permission", AppAction.Read, AppResource.Permissions),
+    new("Read role", AppAction.Read, AppResource.Roles),
+    new("Create role", AppAction.Create, AppResource.Roles),
+    new("Update role", AppAction.Update, AppResource.Roles),
+    new("Delete role", AppAction.Delete, AppResource.Roles),
   };
 }
 

@@ -1,3 +1,5 @@
+using EduBackend.Source.Common.Helper;
+
 namespace EduBackend.Source.Common;
 
 public static class Startup

@@ -1,4 +1,5 @@
 using EduBackend.Source.Common;
+using EduBackend.Source.Common.Helper;
 using EduBackend.Source.Exception;
 using EduBackend.Source.Exception.Http;
 using EduBackend.Source.Model.Common;
@@ -61,6 +62,11 @@ public class AuthenticationService : IAuthenticationService
 
   public async Task<AuthenticationPayloadDto> Refresh(string refreshToken)
   {
+    if (!_jwtTokenService.ValidateRefreshToken(refreshToken))
+    {
+      throw new ForbiddenException(ExceptionMessageCode.InvalidToken);
+    }
+    
     var userIdEmail = await _userService.GetUserIdByRefreshToken(refreshToken);
     if (userIdEmail is null)
     {
@@ -77,12 +83,6 @@ public class AuthenticationService : IAuthenticationService
     var tokenPayload = new AuthenticationTokenPayload(userIdEmail.Email, userIdEmail.UserId);
     var newAccessToken = _jwtTokenService.GenerateAccessToken(tokenPayload);
     var newRefreshToken = _jwtTokenService.GenerateAccessToken(tokenPayload);
-
-    if (!_jwtTokenService.ValidateRefreshToken(refreshToken))
-    {
-      await _userService.DeleteRefreshToken(refreshToken);
-      throw new ForbiddenException(ExceptionMessageCode.InvalidToken);
-    }
 
     await _userService.DeleteRefreshToken(refreshToken);
     await _userService.AddRefreshTokenByUserId(userIdEmail.UserId, newRefreshToken);

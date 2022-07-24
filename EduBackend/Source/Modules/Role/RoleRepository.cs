@@ -67,6 +67,7 @@ public class RoleRepository : IRoleRepository
   public Task<Model.Entity.Role?> GetById(long id)
   {
     return _db.Roles.Where(role => role.Id == id)
+      .AsNoTracking()
       .Include(role => role.Permissions)
       .SingleOrDefaultAsync();
   }
@@ -74,6 +75,7 @@ public class RoleRepository : IRoleRepository
   public async Task<DataPage<Model.Entity.Role>> Filter(string? searchQuery, int page, int pageSize)
   {
     IQueryable<Model.Entity.Role> query = _db.Roles
+      .AsNoTracking()
       .Include(role => role.Permissions)
       .OrderByDescending(role => role.CreatedAt);
 

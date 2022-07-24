@@ -2,7 +2,7 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
 
-namespace EduBackend.Source.Common;
+namespace EduBackend.Source.Common.Helper;
 
 public class EmailClient : IEmailClient
 {

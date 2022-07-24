@@ -1,4 +1,4 @@
-namespace EduBackend.Source.Common;
+namespace EduBackend.Source.Common.Helper;
 
 public interface IEmailClient
 {

@@ -1,4 +1,5 @@
 using EduBackend.Source.Model;
+using EduBackend.Source.Model.Common;
 using EduBackend.Source.Model.Projection;
 using Microsoft.EntityFrameworkCore;
 
@@ -85,5 +86,31 @@ public class AuthorRepository : IAuthorRepository
     await _db.SaveChangesAsync();
 
     return true;
+  }
+
+  public async Task<DataPage<Model.Entity.Author>> Filter(
+    int page,
+    int pageSize,
+    string? searchQuery)
+  {
+    IQueryable<Model.Entity.Author> query = _db.Authors
+      .AsNoTracking()
+      .OrderByDescending(role => role.CreatedAt);
+
+    if (searchQuery is not null)
+    {
+      query = query.Where(
+        role => EF.Functions.Like(role.Name.ToUpper(), $"%{searchQuery.ToUpper()}%")
+      );
+    }
+
+    return await DataPage<Model.Entity.Author>.FromQuery(query, page, pageSize);
+  }
+
+  public async Task<Model.Entity.Author?> GetById(long id)
+  {
+    return await _db.Authors
+      .AsNoTracking()
+      .SingleOrDefaultAsync(e => e.Id == id);
   }
 }

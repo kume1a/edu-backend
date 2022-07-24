@@ -2,6 +2,7 @@ using EduBackend.Source.Common.Helper;
 using EduBackend.Source.Exception;
 using EduBackend.Source.Exception.Http;
 using EduBackend.Source.Model.DTO.Author;
+using EduBackend.Source.Model.DTO.Common;
 using EduBackend.Source.Model.Mapper.Author;
 
 namespace EduBackend.Source.Modules.Author;
@@ -106,5 +107,23 @@ public class AuthorService : IAuthorService
         }
       );
     }
+  }
+
+  public async Task<DataPageDto<AuthorDto>> FilterAuthors(int page, int pageSize, string? searchQuery)
+  {
+    var authors = await _authorRepository.Filter(page, pageSize, searchQuery);
+    
+    return DataPageDto<AuthorDto>.fromDataPage(authors, _authorMapper.ShallowMap);
+  }
+
+  public async Task<AuthorDto> GetAuthorById(long id)
+  {
+    var author = await _authorRepository.GetById(id);
+    if (author is null)
+    {
+      throw new NotFoundException(ExceptionMessageCode.AuthorNotFound);
+    }
+
+    return _authorMapper.ShallowMap(author);
   }
 }

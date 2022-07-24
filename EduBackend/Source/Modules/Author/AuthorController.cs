@@ -1,4 +1,5 @@
 using EduBackend.Source.Model.DTO.Author;
+using EduBackend.Source.Model.DTO.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EduBackend.Source.Modules.Author;
@@ -23,7 +24,7 @@ public class AuthorController : ControllerBase
   }
 
   [HttpPatch("{id}")]
-  public async Task<ActionResult<AuthorDto>> CreateAuthor(
+  public async Task<ActionResult<AuthorDto>> UpdateAuthor(
     [FromRoute] long id,
     [FromForm] UpdateAuthorDto form)
   {
@@ -31,12 +32,33 @@ public class AuthorController : ControllerBase
 
     return Ok(author);
   }
-  
+
   [HttpDelete("{id}")]
-  public async Task<ActionResult<AuthorDto>> DeleteAuthor([FromRoute] long id)
+  public async Task<ActionResult> DeleteAuthor([FromRoute] long id)
   {
     await _authorService.DeleteAuthorById(id);
 
     return Ok();
+  }
+
+  [HttpGet]
+  public async Task<ActionResult<DataPageDto<AuthorDto>>> FilterAuthors(
+    [FromQuery] FilterAuthorDto query)
+  {
+    var authors = await _authorService.FilterAuthors(
+      query.Page,
+      query.PageSize,
+      query.SearchQuery
+    );
+
+    return Ok(authors);
+  }
+
+  [HttpGet("{id}")]
+  public async Task<ActionResult<AuthorDto>> GetAuthorById([FromRoute] long id)
+  {
+    var author = await _authorService.GetAuthorById(id);
+
+    return Ok(author);
   }
 }

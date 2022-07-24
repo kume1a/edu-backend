@@ -4,6 +4,7 @@ using EduBackend.Source.Middleware;
 using EduBackend.Source.Model;
 using EduBackend.Source.Model.Mapper;
 using EduBackend.Source.Modules.Authentication;
+using EduBackend.Source.Modules.Author;
 using EduBackend.Source.Modules.Documents;
 using EduBackend.Source.Modules.Feedback;
 using EduBackend.Source.Modules.Genre;
@@ -46,7 +47,8 @@ builder.Services
   .AddRoleModule()
   .AddDocumentModule()
   .AddGenreModule()
-  .AddFeedbackModule();
+  .AddFeedbackModule()
+  .AddAuthorModule();
 
 var app = builder.Build();
 
@@ -62,11 +64,22 @@ if (app.Environment.IsDevelopment())
   );
 }
 
-app.UseStaticFiles(new StaticFileOptions
-{
-  FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "Assets")),
-  RequestPath = "/Assets"
-});
+app.UseStaticFiles(
+    new StaticFileOptions
+    {
+      FileProvider =
+        new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "Assets")),
+      RequestPath = "/Assets",
+    }
+  )
+  .UseStaticFiles(
+    new StaticFileOptions
+    {
+      FileProvider =
+        new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "Public")),
+      RequestPath = "/Public",
+    }
+  );
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors(

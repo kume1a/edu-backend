@@ -1,3 +1,4 @@
+using EduBackend.Source.Model.Mapper.Author;
 using EduBackend.Source.Model.Mapper.Document;
 using EduBackend.Source.Model.Mapper.DocumentParagraph;
 using EduBackend.Source.Model.Mapper.Feedback;
@@ -15,7 +16,8 @@ public static class Startup
       .AddScoped<IDocumentParagraphMapper, DocumentParagraphMapper>()
       .AddScoped<IDocumentMapper, DocumentMapper>()
       .AddScoped<IGenreMapper, GenreMapper>()
-      .AddScoped<IFeedbackMapper, FeedbackMapper>();
+      .AddScoped<IFeedbackMapper, FeedbackMapper>()
+      .AddScoped<IAuthorMapper, AuthorMapper>();
 
     return services;
   }

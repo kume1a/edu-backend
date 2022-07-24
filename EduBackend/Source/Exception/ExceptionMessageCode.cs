@@ -20,4 +20,5 @@ public static class ExceptionMessageCode
   public const string DocumentNotFound = nameof(DocumentNotFound);
   public const string DocumentParagraphNotFound = nameof(DocumentParagraphNotFound);
   public const string GenreNotFound = nameof(GenreNotFound);
+  public const string InvalidImage = nameof(InvalidImage);
 }

@@ -19,6 +19,7 @@ public class DataContext : IdentityDbContext<User, Role, long,
   public DbSet<DocumentParagraph> DocumentParagraphs { get; set; }
   public DbSet<Genre> Genres { get; set; }
   public DbSet<Feedback> Feedback { get; set; }
+  public DbSet<Author> Authors { get; set; }
 
   public DataContext(DbContextOptions<DataContext> options) : base(options)
   {

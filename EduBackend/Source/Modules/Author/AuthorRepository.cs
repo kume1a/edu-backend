@@ -31,7 +31,7 @@ public class AuthorRepository : IAuthorRepository
     return entity;
   }
 
-  public async Task<Model.Entity.Author?> UpdateEntity(
+  public async Task<Model.Entity.Author?> UpdateById(
     long authorId,
     string? name,
     string? imagePath,
@@ -71,5 +71,19 @@ public class AuthorRepository : IAuthorRepository
   public async Task<bool> ExistsById(long id)
   {
     return await _db.Authors.AnyAsync(e => e.Id == id);
+  }
+
+  public async Task<bool> DeleteById(long id)
+  {
+    var entity = await _db.Authors.SingleOrDefaultAsync(e => e.Id == id);
+    if (entity is null)
+    {
+      return false;
+    }
+
+    _db.Authors.Remove(entity);
+    await _db.SaveChangesAsync();
+
+    return true;
   }
 }

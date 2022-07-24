@@ -31,4 +31,12 @@ public class AuthorController : ControllerBase
 
     return Ok(author);
   }
+  
+  [HttpDelete("{id}")]
+  public async Task<ActionResult<AuthorDto>> DeleteAuthor([FromRoute] long id)
+  {
+    await _authorService.DeleteAuthorById(id);
+
+    return Ok();
+  }
 }

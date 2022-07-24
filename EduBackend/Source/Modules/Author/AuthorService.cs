@@ -48,7 +48,7 @@ public class AuthorService : IAuthorService
     {
       throw new NotFoundException(ExceptionMessageCode.AuthorNotFound);
     }
-    
+
     string? imagePath = null;
     string? blurImagePath = null;
     if (image != null)
@@ -65,7 +65,7 @@ public class AuthorService : IAuthorService
 
     var oldImages = await _authorRepository.GetImagePathsById(authorId);
 
-    var author = await _authorRepository.UpdateEntity(
+    var author = await _authorRepository.UpdateById(
       authorId,
       name,
       imagePath: imagePath,
@@ -78,11 +78,33 @@ public class AuthorService : IAuthorService
         () =>
         {
           File.Delete(oldImages.ImagePath);
-          File.Delete(oldImages.ImagePath);
+          File.Delete(oldImages.BlurImagePath);
         }
       );
     }
 
     return _authorMapper.ShallowMap(author!);
+  }
+
+  public async Task DeleteAuthorById(long id)
+  {
+    var oldImages = await _authorRepository.GetImagePathsById(id);
+
+    var didDelete = await _authorRepository.DeleteById(id);
+    if (!didDelete)
+    {
+      throw new NotFoundException(ExceptionMessageCode.AuthorNotFound);
+    }
+
+    if (oldImages is not null)
+    {
+      await Task.Run(
+        () =>
+        {
+          File.Delete(oldImages.ImagePath);
+          File.Delete(oldImages.BlurImagePath);
+        }
+      );
+    }
   }
 }

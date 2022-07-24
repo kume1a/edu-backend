@@ -21,4 +21,14 @@ public class AuthorController : ControllerBase
 
     return Created(author.Id.ToString(), author);
   }
+
+  [HttpPatch("{id}")]
+  public async Task<ActionResult<AuthorDto>> CreateAuthor(
+    [FromRoute] long id,
+    [FromForm] UpdateAuthorDto form)
+  {
+    var author = await _authorService.UpdateAuthor(id, form.Name, form.Image);
+
+    return Ok(author);
+  }
 }

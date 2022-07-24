@@ -5,4 +5,5 @@ namespace EduBackend.Source.Modules.Author;
 public interface IAuthorService
 {
   Task<AuthorDto> CreateAuthor(string name, IFormFile image);
+  Task<AuthorDto> UpdateAuthor(long authorId, string? name, IFormFile? image);
 }

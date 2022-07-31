@@ -7,4 +7,7 @@ public interface IDocumentService
 {
   Task<DocumentDto> GetDocumentByDocumentType(DocumentType documentType);
   Task<IEnumerable<DocumentDto>> GetAllDocuments();
+  Task ValidateDocumentById(long documentId);
+
+  Task<DocumentDto> GetDocumentById(long documentId);
 }

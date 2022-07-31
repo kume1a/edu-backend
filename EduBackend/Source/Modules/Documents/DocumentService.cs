@@ -34,4 +34,23 @@ public class DocumentService: IDocumentService
 
     return documents.Select(_documentMapper.ShallowMap);
   }
+
+  public async Task ValidateDocumentById(long documentId)
+  {
+    if (!await _documentRepository.ExistsById(documentId))
+    {
+      throw new NotFoundException(ExceptionMessageCode.DocumentNotFound);
+    }
+  }
+
+  public async Task<DocumentDto> GetDocumentById(long documentId)
+  {
+    var document = await _documentRepository.GetById(documentId);
+    if (document is null)
+    {
+      throw new NotFoundException(ExceptionMessageCode.DocumentNotFound);
+    }
+
+    return _documentMapper.ShallowMap(document);
+  }
 }

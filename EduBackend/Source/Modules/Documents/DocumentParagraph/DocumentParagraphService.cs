@@ -10,13 +10,16 @@ public class DocumentParagraphService : IDocumentParagraphService
 {
   private readonly IDocumentParagraphRepository _documentParagraphRepository;
   private readonly IDocumentParagraphMapper _documentParagraphMapper;
+  private readonly IDocumentService _documentService;
 
   public DocumentParagraphService(
     IDocumentParagraphRepository documentParagraphRepository,
-    IDocumentParagraphMapper documentParagraphMapper)
+    IDocumentParagraphMapper documentParagraphMapper,
+    IDocumentService documentService)
   {
     _documentParagraphRepository = documentParagraphRepository;
     _documentParagraphMapper = documentParagraphMapper;
+    _documentService = documentService;
   }
 
   public async Task<DocumentParagraphDto> CreateDocumentParagraph(
@@ -25,6 +28,8 @@ public class DocumentParagraphService : IDocumentParagraphService
     int index,
     string content)
   {
+    await _documentService.ValidateDocumentById(documentId);
+
     var documentParagraph =
       await _documentParagraphRepository.CreateEntity(documentId, title, index, content);
 
@@ -34,9 +39,11 @@ public class DocumentParagraphService : IDocumentParagraphService
   public async Task<DataPageDto<DocumentParagraphDto>> GetDocumentParagraphsByDocumentId(
     long documentId,
     int page,
-    int pageSize)
+    int pageSize,
+    string? searchQuery)
   {
-    var documentParagraphs = await _documentParagraphRepository.Filter(documentId, page, pageSize);
+    var documentParagraphs =
+      await _documentParagraphRepository.Filter(documentId, page, pageSize, searchQuery);
 
     return DataPageDto<DocumentParagraphDto>.fromDataPage(
       documentParagraphs,

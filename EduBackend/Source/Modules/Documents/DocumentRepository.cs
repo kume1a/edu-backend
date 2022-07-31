@@ -26,4 +26,14 @@ public class DocumentRepository : IDocumentRepository
   {
     return await _db.Documents.AsNoTracking().ToListAsync();
   }
+
+  public async Task<bool> ExistsById(long id)
+  {
+    return await _db.Documents.AnyAsync(e => e.Id == id);
+  }
+
+  public async Task<Document?> GetById(long id)
+  {
+    return await _db.Documents.SingleOrDefaultAsync(e => e.Id == id);
+  }
 }

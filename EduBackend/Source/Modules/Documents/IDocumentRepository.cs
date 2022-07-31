@@ -7,4 +7,7 @@ public interface IDocumentRepository
 {
   Task<Document?> GetByDocumentType(DocumentType documentType);
   Task<IEnumerable<Document>> GetAll();
+  Task<bool> ExistsById(long id);
+
+  Task<Document?> GetById(long id);
 }

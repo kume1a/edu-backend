@@ -36,13 +36,24 @@ public class DocumentParagraphRepository : IDocumentParagraphRepository
   public async Task<DataPage<Model.Entity.DocumentParagraph>> Filter(
     long documentId,
     int page,
-    int pageSize)
+    int pageSize,
+    string? searchQuery)
   {
     var query =
       _db.DocumentParagraphs
         .Where(documentParagraph => documentParagraph.DocumentId == documentId)
         .OrderByDescending(documentParagraph => documentParagraph.CreatedAt)
         .AsNoTracking();
+
+    if (searchQuery is not null)
+    {
+      query = query.Where(
+        documentParagraph => EF.Functions.Like(
+          documentParagraph.Title.ToUpper(),
+          $"%{searchQuery.ToUpper()}%"
+        )
+      );
+    }
 
     return await DataPage<Model.Entity.DocumentParagraph>.FromQuery(query, page, pageSize);
   }

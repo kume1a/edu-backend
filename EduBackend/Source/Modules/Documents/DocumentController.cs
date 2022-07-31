@@ -85,7 +85,8 @@ public class DocumentController : ControllerBase
       await _documentParagraphService.GetDocumentParagraphsByDocumentId(
         documentId,
         query.Page,
-        query.PageSize
+        query.PageSize,
+        query.SearchQuery
       );
 
     return Ok(documentParagraphs);
@@ -104,5 +105,13 @@ public class DocumentController : ControllerBase
     );
 
     return Created(documentParagraph.Id.ToString(), documentParagraph);
+  }
+
+  [HttpGet("{id}")]
+  public async Task<ActionResult<DocumentDto>> GetDocument([FromRoute] long id)
+  {
+    var document = await _documentService.GetDocumentById(id);
+
+    return Ok(document);
   }
 }

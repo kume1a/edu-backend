@@ -10,7 +10,7 @@ public interface IDocumentParagraphRepository
     int index,
     string content);
 
-  Task<DataPage<Model.Entity.DocumentParagraph>> Filter(long documentId, int page, int pageSize);
+  Task<DataPage<Model.Entity.DocumentParagraph>> Filter(long documentId, int page, int pageSize, string? searchQuery);
   Task<bool> DeleteById(long id);
 
   Task<Model.Entity.DocumentParagraph?> UpdateById(

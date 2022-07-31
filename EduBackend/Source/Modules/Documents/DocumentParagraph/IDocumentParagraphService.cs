@@ -14,7 +14,8 @@ public interface IDocumentParagraphService
   Task<DataPageDto<DocumentParagraphDto>> GetDocumentParagraphsByDocumentId(
     long documentId,
     int page,
-    int pageSize);
+    int pageSize,
+    string? searchQuery);
   Task DeleteDocumentParagraphById(long id);
 
   Task<DocumentParagraphDto> UpdateDocumentParagraphById(

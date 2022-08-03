@@ -1,5 +1,4 @@
 using EduBackend.Source.Model.Common;
-using EduBackend.Source.Model.DTO.Author;
 using EduBackend.Source.Model.Projection;
 
 namespace EduBackend.Source.Modules.Author;
@@ -19,4 +18,5 @@ public interface IAuthorRepository
   Task<bool> DeleteById(long id);
   Task<DataPage<Model.Entity.Author>> Filter(int page, int pageSize, string? searchQuery);
   Task<Model.Entity.Author?> GetById(long id);
+  Task<IEnumerable<Model.Entity.Author>> GetAll();
 }

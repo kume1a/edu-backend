@@ -10,4 +10,5 @@ public interface IAuthorService
   Task DeleteAuthorById(long id);
   Task<DataPageDto<AuthorDto>> FilterAuthors(int page, int pageSize, string? searchQuery);
   Task<AuthorDto> GetAuthorById(long id);
+  Task<IEnumerable<AuthorDto>> GetAllAuthors();
 }

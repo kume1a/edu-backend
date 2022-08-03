@@ -126,4 +126,11 @@ public class AuthorService : IAuthorService
 
     return _authorMapper.ShallowMap(author);
   }
+
+  public async Task<IEnumerable<AuthorDto>> GetAllAuthors()
+  {
+    var authors = await _authorRepository.GetAll();
+
+    return authors.Select(_authorMapper.ShallowMap);
+  }
 }

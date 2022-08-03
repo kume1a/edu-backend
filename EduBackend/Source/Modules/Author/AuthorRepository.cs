@@ -113,4 +113,13 @@ public class AuthorRepository : IAuthorRepository
       .AsNoTracking()
       .SingleOrDefaultAsync(e => e.Id == id);
   }
+
+  public async Task<IEnumerable<Model.Entity.Author>> GetAll()
+  {
+    return await _db.Authors
+      .AsNoTracking()
+      .OrderByDescending(e => e.CreatedAt)
+      .Select(e => new Model.Entity.Author { Id = e.Id, Name = e.Name })
+      .ToListAsync();
+  }
 }

@@ -53,6 +53,14 @@ public class AuthorController : ControllerBase
 
     return Ok(authors);
   }
+  
+  [HttpGet("all")]
+  public async Task<ActionResult<IEnumerable<AuthorDto>>> GetAllAuthors()
+  {
+    var author = await _authorService.GetAllAuthors();
+
+    return Ok(author);
+  }
 
   [HttpGet("{id}")]
   public async Task<ActionResult<AuthorDto>> GetAuthorById([FromRoute] long id)
